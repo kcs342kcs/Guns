@@ -37,6 +37,59 @@ COLUMNS = [
     "totals"
 ]
 
+us_state_abbrev = {
+    'Alabama': 'AL',
+    'Alaska': 'AK',
+    'Arizona': 'AZ',
+    'Arkansas': 'AR',
+    'California': 'CA',
+    'Colorado': 'CO',
+    'Connecticut': 'CT',
+    'Delaware': 'DE',
+    'Florida': 'FL',
+    'Georgia': 'GA',
+    'Hawaii': 'HI',
+    'Idaho': 'ID',
+    'Illinois': 'IL',
+    'Indiana': 'IN',
+    'Iowa': 'IA',
+    'Kansas': 'KS',
+    'Kentucky': 'KY',
+    'Louisiana': 'LA',
+    'Maine': 'ME',
+    'Maryland': 'MD',
+    'Massachusetts': 'MA',
+    'Michigan': 'MI',
+    'Minnesota': 'MN',
+    'Mississippi': 'MS',
+    'Missouri': 'MO',
+    'Montana': 'MT',
+    'Nebraska': 'NE',
+    'Nevada': 'NV',
+    'New Hampshire': 'NH',
+    'New Jersey': 'NJ',
+    'New Mexico': 'NM',
+    'New York': 'NY',
+    'North Carolina': 'NC',
+    'North Dakota': 'ND',
+    'Ohio': 'OH',
+    'Oklahoma': 'OK',
+    'Oregon': 'OR',
+    'Pennsylvania': 'PA',
+    'Rhode Island': 'RI',
+    'South Carolina': 'SC',
+    'South Dakota': 'SD',
+    'Tennessee': 'TN',
+    'Texas': 'TX',
+    'Utah': 'UT',
+    'Vermont': 'VT',
+    'Virginia': 'VA',
+    'Washington': 'WA',
+    'West Virginia': 'WV',
+    'Wisconsin': 'WI',
+    'Wyoming': 'WY',
+}
+
 def parse_month(month_str):
     d = datetime.datetime.strptime(month_str, "%B - %Y")
     return d.strftime("%Y-%m")
@@ -117,4 +170,10 @@ file = open(pdf_file, 'rb')
 data_df = parse_pdf(file)
 data_df["year"] = data_df['month'].str.split("-").str[0]
 data_df["mon_num"] = data_df['month'].str.split("-").str[1]
-data_df.to_csv("Guns_output.csv", index=False)
+final_df = data_df.loc[(data_df["state"] != "Guam") & (data_df["state"] != "District of Columbia") & (data_df["state"] != "Mariana Islands") & (data_df["state"] != "Virgin Islands") & (data_df["state"] != "Puerto Rico")]
+sa = []
+for n,v in final_df["state"].iteritems():
+    sa.append(us_state_abbrev[v])
+    
+final_df["state_abbr"] = pd.Series(sa)
+final_df.to_csv("Guns_output.csv", index=False)
